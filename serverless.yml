@@ -1,0 +1,96 @@
+service: individuell-examination-quiztopia-api
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  profile: ${env:PROFILE}
+  region: eu-north-1
+  iam:
+    role: ${env:LAMBDA_ROLE}
+  deploymentMethod: direct
+  environment:
+    TABLE_NAME: quiztopia
+    JWT_SECRET: ${env:JWT_SECRET}
+
+useDotenv: true
+
+plugins:
+  - serverless-esbuild
+
+package:
+  individually: true
+
+custom:
+  esbuild:
+    exclude: []
+    minify: true
+
+functions:
+  getQuizzes:
+    handler: src/functions/Quiz/getQuizzes.handler
+    events:
+      - httpApi: 'GET /api/quiz'
+  createQuiz:
+    handler: src/functions/Quiz/createQuiz.handler
+    events:
+      - httpApi: 'POST /api/quiz'
+  addQuizQuestion:
+    handler: src/functions/Quiz/addQuizQuestion.handler
+    events:
+      - httpApi: 'POST /api/quiz/{quizId}/question'
+  getQuiz:
+    handler: src/functions/Quiz/getQuiz.handler
+    events:
+      - httpApi: 'GET /api/quiz/{quizId}'
+  deleteQuiz:
+    handler: src/functions/Quiz/deleteQuiz.handler
+    events:
+      - httpApi: 'DELETE /api/quiz/{quizId}'
+  createUser:
+    handler: src/functions/User/createUser.handler
+    events:
+      - httpApi: 'POST /api/auth/signup'
+  loginUser:
+    handler: src/functions/User/loginUser.handler
+    events:
+      - httpApi: 'POST /api/auth/login'
+  addQuizPoints:
+    handler: src/functions/Quiz/addQuizPoints.handler
+    events:
+      - httpApi: 'POST /api/quiz/{quizId}'
+  getQuizLeaderboard:
+    handler: src/functions/Quiz/getQuizLeaderboard.handler
+    events:
+      - httpApi: 'GET /api/quiz/{quizId}/leaderboard'
+
+resources:
+  Resources:
+    Quiztopia:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.TABLE_NAME}
+        AttributeDefinitions:
+          - AttributeName: PK
+            AttributeType: S
+          - AttributeName: SK
+            AttributeType: S
+          - AttributeName: GSI1PK
+            AttributeType: S
+          - AttributeName: GSI1SK
+            AttributeType: S
+        KeySchema:
+          - AttributeName: PK
+            KeyType: HASH
+          - AttributeName: SK
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
+        GlobalSecondaryIndexes:
+          - IndexName: GSI1
+            KeySchema:
+              - AttributeName: GSI1PK
+                KeyType: HASH
+              - AttributeName: GSI1SK
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL

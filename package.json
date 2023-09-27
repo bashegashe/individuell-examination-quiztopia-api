@@ -1,0 +1,25 @@
+{
+  "name": "individuell-examination-quiztopia-api",
+  "version": "1.0.0",
+  "description": "Individuell examination - Quiztopia API",
+  "main": "index.js",
+  "author": "Bachir Sbinati",
+  "license": "ISC",
+  "dependencies": {
+    "@middy/core": "^4.6.4",
+    "aws-lambda": "^1.0.7",
+    "aws-sdk": "^2.1463.0",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "nanoid": "^5.0.1",
+    "zod": "^3.22.2"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.122",
+    "@types/aws-sdk": "^2.7.0",
+    "@types/bcryptjs": "^2.4.4",
+    "@types/jsonwebtoken": "^9.0.3",
+    "@types/node": "^20.6.5",
+    "serverless-esbuild": "^1.48.3"
+  }
+}
